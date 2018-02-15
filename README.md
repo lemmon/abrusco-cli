@@ -27,6 +27,28 @@ Example
   $ abrusco src/master.css -o dist/bundle.css --watch
 ```
 
+## Build Your Own
+
+`master.css`:
+
+```css
+@import 'abrusco';
+
+/* my custom variables */
+:root {
+  --text-color: var(--indigo); /* affect Abrusco's internals */
+}
+
+/* my custom styles */
+.hello {
+  color: var(--orange);
+}
+```
+
+```sh
+abrusco master.css > bundle.css
+```
+
 ## Related
 
 - [`abrusco`](https://github.com/lemmon/abrusco)

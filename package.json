@@ -26,7 +26,8 @@
   "scripts": {
     "build": "node cli.js test/input.css -o test/output.css",
     "test": "npm run build && diff -s node_modules/abrusco/css/abrusco.css test/output.css",
-    "w": "npm run build -- --watch"
+    "w": "npm run build -- --watch",
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
