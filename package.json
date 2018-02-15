@@ -1,0 +1,46 @@
+{
+  "name": "abrusco-cli",
+  "description": "CLI for Abrusco CSS.",
+  "version": "0.1.0",
+  "author": "lemmon",
+  "license": "MIT",
+  "main": "index.js",
+  "bin": {
+    "abrusco": "cli.js"
+  },
+  "dependencies": {
+    "abrusco": "^0.4.2",
+    "chalk": "^2.0.1",
+    "chokidar": "^2.0.2",
+    "cssnano": "^3.10.0",
+    "file-exists": "^5.0.1",
+    "meow": "^4.0.0",
+    "postcss": "^6.0.17",
+    "postcss-assets": "^5.0.0",
+    "postcss-cssnext": "^3.1.0",
+    "postcss-discard-comments": "^2.0.4",
+    "postcss-import": "^9.1.0",
+    "postcss-nested": "^3.0.0",
+    "postcss-reporter": "^5.0.0"
+  },
+  "scripts": {
+    "build": "node cli.js test/input.css -o test/output.css",
+    "test": "npm run build && diff -s node_modules/abrusco/css/abrusco.css test/output.css",
+    "w": "npm run build -- --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lemmon/abrusco-cli.git"
+  },
+  "keywords": [
+    "css",
+    "oocss",
+    "postcss",
+    "design",
+    "responsive"
+  ],
+  "bugs": {
+    "url": "https://github.com/lemmon/abrusco-cli/issues"
+  },
+  "homepage": "https://github.com/lemmon/abrusco-cli#readme"
+}
