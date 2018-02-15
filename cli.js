@@ -106,8 +106,14 @@ function buildCSS(options) {
       }
     }).catch(err => {
       let output = '\n'
-      output += `${chalk.bold.underline(logFrom(err.file))}\n`;
-      output += `${chalk.red(`[${err.name}]`)} ${chalk.bold(`${err.line}:${err.column}`)}\t${err.reason}`
+      if (err.file) {
+        output += `${chalk.bold.underline(logFrom(err.file))}\n`;
+      }
+      if (err.reason) {
+        output += `${chalk.red(`[${err.name}]`)} ${chalk.bold(`${err.line}:${err.column}`)}\t${err.reason}`
+      } else {
+        output += `${chalk.red(`[${err.name}]`)} ${err.message}`
+      }
       console.error(output)
     })
   })
