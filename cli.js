@@ -6,6 +6,7 @@ const meow = require('meow')
 const chalk = require('chalk')
 //const mkdirp = require('mkdirp')
 const fileExists = require('file-exists')
+const isDirectory = require('is-directory')
 
 const cli = meow(`
   Usage
@@ -41,26 +42,26 @@ const cli = meow(`
   },
 })
 
-const inputFile = cli.input[0]
-const outputFile = cli.flags.output
-
-if (!inputFile) {
-  console.error(chalk.red('Please provide an input stylesheet'))
-  console.log(cli.help)
-  process.exit(1)
-} else if (!fileExists.sync(inputFile)) {
-  console.error(chalk.red('File does not exist ' + inputFile))
-  console.log(cli.help)
-  process.exit(1)
+if (!cli.input[0]) {
+  cli.showHelp()
 }
 
-if (outputFile) {
-  if (typeof outputFile !== 'string') {
-    console.error(chalk.red('Invalid output file provided'))
-    console.log(cli.help)
-    process.exit(1)
+const inputFile = findFile(cli.input[0], (err) => {
+  console.error(chalk.red(`file not found: ${cli.input[0]}`))
+  process.exit(1)
+})
+
+function findFile(input, cb) {
+  if (fileExists.sync(input)) {
+    return input
+  } else if (isDirectory.sync(input)) {
+    return findFile(path.join(input, 'index.css'), cb)
+  } else {
+    cb()
   }
 }
+
+const outputFile = cli.flags.output
 
 const options = {
   from: inputFile,
