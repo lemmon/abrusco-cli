@@ -15,7 +15,8 @@ const cli = meow(`
   Options
     -o, --output Output file
     -m, --minify Minify the output stylesheet
-    -w, --watch Watch CSS source directory for changes
+    -w, --watch  Watch CSS source directory for changes
+    --novars     Do not preserve CSS variables
 
   Example
     $ abrusco src/master.css -o dist/bundle.css
@@ -38,6 +39,9 @@ const cli = meow(`
     watch: {
       type: 'boolean',
       alias: 'w',
+    },
+    novars: {
+      type: 'boolean',
     },
   },
 })
@@ -68,6 +72,7 @@ const options = {
   plugins: [
     require('postcss-reporter'),
   ],
+  cssvars: !cli.flags.novars,
 }
 
 if (outputFile) {
@@ -93,31 +98,31 @@ if (cli.flags.watch) {
 }
 
 function buildCSS(options) {
-  fs.readFile(options.from, 'utf8', (err, css) => {
-    abrusco(css, options).then(res => {
-      if (options.to) {
-        fs.writeFile(options.to, res.css, (err) => {
-          if (err) throw err
-          const t1 = new Date()
-          const ts = (t1.valueOf() - t0) / 1000
-          console.log(`${res.css.length} bytes written to ${options.to} (${ts.toFixed(2)} seconds) at ${t1.toLocaleTimeString()}`)
-        })
-      } else {
-        process.stdout.write(res.css)
-      }
-    }).catch(err => {
-      let output = '\n'
-      if (err.file) {
-        output += `${chalk.bold.underline(logFrom(err.file))}\n`;
-      }
-      if (err.reason) {
-        output += `${chalk.red(`[${err.name}]`)} ${chalk.bold(`${err.line}:${err.column}`)}\t${err.reason}`
-      } else {
-        output += `${chalk.red(`[${err.name}]`)} ${err.message}`
-      }
-      console.error(output)
-    })
+  const css = fs.readFileSync(options.from, 'utf8')
+  abrusco(css, options).then(res => {
+    if (options.to) {
+      fs.writeFile(options.to, res.css, (err) => {
+        if (err) throw err
+        const t1 = new Date()
+        const ts = (t1.valueOf() - t0) / 1000
+        console.log(`${res.css.length} bytes written to ${options.to} (${ts.toFixed(2)} seconds) at ${t1.toLocaleTimeString()}`)
+      })
+    } else {
+      process.stdout.write(res.css)
+    }
+  }).catch(err => {
+    let output = '\n'
+    if (err.file) {
+      output += `${chalk.bold.underline(logFrom(err.file))}\n`;
+    }
+    if (err.reason) {
+      output += `${chalk.red(`[${err.name}]`)} ${chalk.bold(`${err.line}:${err.column}`)}\t${err.reason}`
+    } else {
+      output += `${chalk.red(`[${err.name}]`)} ${err.message}`
+    }
+    console.error(output)
   })
+
 }
 
 function logFrom(fromValue) {

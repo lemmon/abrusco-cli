@@ -1,30 +1,28 @@
 const path = require('path')
 const postcss = require('postcss')
 
+const browsers = [
+  'ie >= 10',
+  '> 1%',
+  'last 2 versions',
+]
+
 const getPlugins = (options) => {
   // plugins
   const plugins = [
     require('postcss-import'),
-    require('postcss-nested'),
-    require('postcss-assets')({
-      loadPaths: [
-        path.join(__dirname, 'src'),
-      ],
-    }),
-    require('postcss-cssnext')({
-      browsers: [
-        'ie 10',
-        '> 1%',
-        'last 2 versions',
-      ],
+    require('postcss-assets'),
+    require('postcss-preset-env')({
+      stage: 0,
+      browsers,
       features: {
-        autoprefixer: {
-          supports: false,
-        },
-        customProperties: {
-          preserve: true,
+        'css-variables': {
+          preserve: options.cssvars === false ? false : true,
         },
       },
+    }),
+    require('autoprefixer')({
+      browsers,
     }),
     require('postcss-discard-comments'),
     require('postcss-discard-duplicates'),
