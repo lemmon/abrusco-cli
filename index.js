@@ -16,7 +16,7 @@ const getPlugins = (options) => {
       stage: 0,
       browsers,
       features: {
-        'css-variables': {
+        'custom-properties': {
           preserve: options.cssvars === false ? false : true,
         },
       },

@@ -16,7 +16,7 @@ const cli = meow(`
     -o, --output Output file
     -m, --minify Minify the output stylesheet
     -w, --watch  Watch CSS source directory for changes
-    --novars     Do not preserve CSS variables
+    --novars     Do not preserve Custom Properties
 
   Example
     $ abrusco src/master.css -o dist/bundle.css
@@ -84,7 +84,6 @@ if (cli.flags.minify) {
 }
 
 const abrusco = require('./index')
-const t0 = Date.now()
 
 buildCSS(options)
 
@@ -98,6 +97,7 @@ if (cli.flags.watch) {
 }
 
 function buildCSS(options) {
+  const t0 = Date.now()
   const css = fs.readFileSync(options.from, 'utf8')
   abrusco(css, options).then(res => {
     if (options.to) {

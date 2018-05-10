@@ -1,6 +1,6 @@
 # Abrusco
 
-CLI interface for Abrusco stylesheets. <http://abrusco.lemmonjuice.com>
+CLI interface for Abrusco stylesheets. <http://abrusco.com>
 
 ## Install
 
