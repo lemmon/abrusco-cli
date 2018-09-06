@@ -1,6 +1,6 @@
 # Abrusco
 
-CLI interface for Abrusco stylesheets. <http://abrusco.com>
+CLI interface for Abrusco stylesheets. <https://abrusco.com>
 
 ## Install
 
@@ -37,7 +37,7 @@ Example
 
 /* my custom variables */
 :root {
-  --text-color: var(--indigo); /* affect Abrusco's internals */
+  --text-color: var(--purple); /* affect Abrusco's internals */
 }
 
 /* my custom styles */

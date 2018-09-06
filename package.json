@@ -26,7 +26,7 @@
     "postcss-reporter": "^5.0.0"
   },
   "devDependencies": {
-    "abrusco": "^0.6.3"
+    "abrusco": "^0.7.0"
   },
   "scripts": {
     "build": "node cli.js test -o test/output.css",
