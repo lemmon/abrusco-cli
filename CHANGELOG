@@ -1,0 +1,4 @@
+* 0.3.1 (2018-09-12)
+
+  * add changelog
+  * updated dependencies: chalk, chokidar, meow
