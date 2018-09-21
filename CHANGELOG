@@ -1,3 +1,10 @@
+* 0.3.2 (2018-09-21)
+
+  * automatically add .css extension to input, if not provided
+  * check if output file or directory exists
+  * automatically add filename if output is a directory
+  * check for input and output permissions
+
 * 0.3.1 (2018-09-12)
 
   * add changelog

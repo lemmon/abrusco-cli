@@ -50,37 +50,82 @@ if (!cli.input[0]) {
   cli.showHelp()
 }
 
-const inputFile = findFile(cli.input[0], (err) => {
-  console.error(chalk.red(`file not found: ${cli.input[0]}`))
-  process.exit(1)
-})
+const inputFile = findFile(cli.input[0])
 
 function findFile(input, cb) {
-  if (fileExists.sync(input)) {
-    return input
-  } else if (isDirectory.sync(input)) {
+  if (isDirectory.sync(input)) {
     return findFile(path.join(input, 'index.css'), cb)
+  } else if (fileExists.sync(input)) {
+    return fileReadable(input)
+  } else if (fileExists.sync(input + '.css')) {
+    return fileReadable(input + '.css')
   } else {
-    cb()
+    console.error(chalk.red(`file not found: ${cli.input[0]}`))
+    process.exit(1)
   }
 }
 
-const outputFile = cli.flags.output
+function fileReadable(file) {
+  try {
+    fs.accessSync(file, fs.constants.R_OK)
+    return file
+  } catch (err) {
+    console.error(chalk.red(`input file not readable: ${file}`))
+    process.exit(1)
+  }
+}
+
+const outputFile = validateOutput(cli.flags.output)
+
+function validateOutput(output) {
+  if (!output) {
+    return null
+  }
+  // output is a directory
+  if (isDirectory.sync(output)) {
+    return validateOutput(path.join(output, path.basename(inputFile)))
+  }
+  // output file writable
+  if (fileExists.sync(output)) {
+    try {
+      fs.accessSync(output, fs.constants.W_OK)
+      return output
+    } catch (err) {
+      console.error(chalk.red(`output file not writable: ${output}`))
+      process.exit(1)
+    }
+  }
+  // check output directory
+  const outputDir = path.dirname(output)
+  // output directory exists
+  if (!isDirectory.sync(outputDir)) {
+    console.error(chalk.red(`output directory does not exist: ${outputDir}`))
+    process.exit(1)
+  }
+  // output directory writable
+  try {
+    fs.accessSync(outputDir, fs.constants.W_OK)
+  } catch (err) {
+    console.error(chalk.red(`output directory not writable: ${outputDir}`))
+    process.exit(1)
+  }
+  //
+  return output
+}
+
+if (inputFile && outputFile && inputFile === outputFile) {
+  console.error(chalk.red(`output cannot be same as input: ${outputFile}`))
+  process.exit(1)
+}
 
 const options = {
   from: inputFile,
+  to: outputFile,
   plugins: [
     require('postcss-reporter'),
   ],
   cssvars: !cli.flags.novars,
-}
-
-if (outputFile) {
-  options.to = outputFile
-}
-
-if (cli.flags.minify) {
-  options.minify = true
+  minify: cli.flags.minify,
 }
 
 const abrusco = require('./index')
@@ -122,7 +167,6 @@ function buildCSS(options) {
     }
     console.error(output)
   })
-
 }
 
 function logFrom(fromValue) {
