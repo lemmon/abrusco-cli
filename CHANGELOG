@@ -1,3 +1,8 @@
+* 0.4.0 (2020-01-07)
+
+  * accept stdin as input
+  * output to dir/bundle.css if output is a directory
+
 * 0.3.2 (2018-09-21)
 
   * automatically add .css extension to input, if not provided

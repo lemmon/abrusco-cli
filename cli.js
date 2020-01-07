@@ -1,12 +1,11 @@
 #!/usr/bin/env node
-
 const fs = require('fs')
 const path = require('path')
 const meow = require('meow')
 const chalk = require('chalk')
-//const mkdirp = require('mkdirp')
 const fileExists = require('file-exists')
 const isDirectory = require('is-directory')
+const abrusco = require('./index')
 
 const cli = meow(`
   Usage
@@ -46,12 +45,6 @@ const cli = meow(`
   },
 })
 
-if (!cli.input[0]) {
-  cli.showHelp()
-}
-
-const inputFile = findFile(cli.input[0])
-
 function findFile(input, cb) {
   if (isDirectory.sync(input)) {
     return findFile(path.join(input, 'index.css'), cb)
@@ -75,15 +68,13 @@ function fileReadable(file) {
   }
 }
 
-const outputFile = validateOutput(cli.flags.output)
-
 function validateOutput(output) {
   if (!output) {
     return null
   }
   // output is a directory
   if (isDirectory.sync(output)) {
-    return validateOutput(path.join(output, path.basename(inputFile)))
+    return validateOutput(path.join(output, 'bundle.css'))
   }
   // output file writable
   if (fileExists.sync(output)) {
@@ -113,44 +104,80 @@ function validateOutput(output) {
   return output
 }
 
-if (inputFile && outputFile && inputFile === outputFile) {
-  console.error(chalk.red(`output cannot be same as input: ${outputFile}`))
-  process.exit(1)
-}
-
-const options = {
-  from: inputFile,
-  to: outputFile,
-  plugins: [
-    require('postcss-reporter'),
-  ],
-  cssvars: !cli.flags.novars,
-  minify: cli.flags.minify,
-}
-
-const abrusco = require('./index')
-
-buildCSS(options)
-
-if (cli.flags.watch) {
-  const chokidar = require('chokidar')
-  chokidar.watch(path.dirname(inputFile), {
-    ignored: options.to || null,
-  }).on('change', () => {
-    buildCSS(options)
+async function readStdin() {
+  let code = ''
+  const stdin = process.stdin
+  return new Promise(resolve => {
+    stdin.setEncoding('utf8')
+    stdin.on('readable', () => {
+      const chunk = process.stdin.read()
+      if (chunk !== null) code += chunk
+    })
+    stdin.on('end', () => {
+      resolve(code)
+    })
   })
 }
 
-function buildCSS(options) {
+async function handleStdin() {
+  handleBuild({
+    from: undefined,
+    css: await readStdin(),
+  })
+}
+
+async function handleFile() {
+  handleBuild({
+    from: findFile(cli.input[0]),
+  })
+}
+
+function handleBuild(props) {
+  const outputFile = validateOutput(cli.flags.output)
+  // options
+  const options = {
+    ...props,
+    to: outputFile,
+    plugins: [
+      require('postcss-reporter'),
+    ],
+    cssvars: !cli.flags.novars,
+    minify: cli.flags.minify,
+  }
+  // check files
+  if (options.from && options.to && options.from === options.to) {
+    console.error(chalk.red(`output cannot be same as input: ${options.to}`))
+    process.exit(1)
+  }
+  // build
+  buildCSS(options)
+  // watch
+  if (cli.flags.watch) {
+    // cannot watch stdin
+    if (!options.from) {
+      console.error(chalk.red(`cannot watch stdin`))
+      process.exit(1)
+    }
+    // do watch
+    const chokidar = require('chokidar')
+    chokidar.watch(path.dirname(options.from), {
+      ignored: options.to || null,
+    }).on('change', () => {
+      buildCSS(options)
+    })
+  }
+}
+
+function buildCSS(props) {
   const t0 = Date.now()
-  const css = fs.readFileSync(options.from, 'utf8')
-  abrusco(css, options).then(res => {
-    if (options.to) {
-      fs.writeFile(options.to, res.css, (err) => {
+  const css = props.from ? fs.readFileSync(props.from, 'utf8') : props.css
+  abrusco(css, props).then(res => {
+    if (props.to) {
+      fs.writeFile(props.to, res.css, (err) => {
         if (err) throw err
         const t1 = new Date()
         const ts = (t1.valueOf() - t0) / 1000
-        console.log(`${res.css.length} bytes written to ${options.to} (${ts.toFixed(2)} seconds) at ${t1.toLocaleTimeString()}`)
+        console.log(`${res.css.length} bytes written to ${props.to} (${ts.toFixed(2)} seconds) at ${t1.toLocaleTimeString()}`)
       })
     } else {
       process.stdout.write(res.css)
@@ -158,7 +185,7 @@ function buildCSS(options) {
   }).catch(err => {
     let output = '\n'
     if (err.file) {
-      output += `${chalk.bold.underline(logFrom(err.file))}\n`;
+      output += `${chalk.bold.underline(logFrom(err.file))}\n`
     }
     if (err.reason) {
       output += `${chalk.red(`[${err.name}]`)} ${chalk.bold(`${err.line}:${err.column}`)}\t${err.reason}`
@@ -172,4 +199,17 @@ function buildCSS(options) {
 function logFrom(fromValue) {
   if (fromValue.charAt(0) === '<') return fromValue
   return path.relative(process.cwd(), fromValue).split(path.sep).join('/')
+}
+
+if (cli.input.length === 0) {
+  if (!process.stdin.isTTY) {
+    handleStdin()
+  } else {
+    cli.showHelp()
+  }
+} else if (cli.input.length === 1) {
+  handleFile()
+} else {
+  console.error(chalk.red(`invalid input`))
+  process.exit(1)
 }

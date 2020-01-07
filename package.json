@@ -25,9 +25,6 @@
     "postcss-preset-env": "^4.1.0",
     "postcss-reporter": "^5.0.0"
   },
-  "devDependencies": {
-    "abrusco": "^0.7.1"
-  },
   "scripts": {
     "build": "node cli.js test -o test/output.css",
     "test": "npm run build && diff -s node_modules/abrusco/css/abrusco.css test/output.css",
