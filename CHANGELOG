@@ -1,3 +1,8 @@
+* 0.5.0 (2020-01-10)
+
+  * update dependencies
+  * move browserslist to package.json
+
 * 0.4.0 (2020-01-07)
 
   * accept stdin as input
