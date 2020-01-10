@@ -1,12 +1,6 @@
 const path = require('path')
 const postcss = require('postcss')
 
-const browsers = [
-  'ie >= 10',
-  '> 1%',
-  'last 2 versions',
-]
-
 const getPlugins = (options) => {
   // plugins
   const plugins = [
@@ -14,16 +8,14 @@ const getPlugins = (options) => {
     require('postcss-assets'),
     require('postcss-preset-env')({
       stage: 0,
-      browsers,
       features: {
+        'color-mod-function': true,
         'custom-properties': {
           preserve: options.cssvars === false ? false : true,
         },
       },
     }),
-    require('autoprefixer')({
-      browsers,
-    }),
+    require('autoprefixer'),
     require('postcss-discard-comments'),
     require('postcss-discard-duplicates'),
   ]
