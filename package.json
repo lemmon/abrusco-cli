@@ -9,7 +9,7 @@
     "abrusco": "cli.js"
   },
   "dependencies": {
-    "autoprefixer": "^9.8.6",
+    "autoprefixer": "^10.0.4",
     "chalk": "^4.1.0",
     "chokidar": "^3.4.1",
     "cssnano": "^4.1.10",
@@ -17,13 +17,13 @@
     "is-directory": "^0.3.1",
     "meow": "^7.0.1",
     "perfectionist": "^2.4.0",
-    "postcss": "^7.0.32",
+    "postcss": "^8.1.10",
     "postcss-assets": "^5.0.0",
     "postcss-discard-comments": "^4.0.2",
     "postcss-discard-duplicates": "^4.0.2",
-    "postcss-import": "^12.0.1",
+    "postcss-import": "^13.0.0",
     "postcss-preset-env": "^6.7.0",
-    "postcss-reporter": "^6.0.1"
+    "postcss-reporter": "^7.0.1"
   },
   "browserslist": [
     "ie >= 11",
