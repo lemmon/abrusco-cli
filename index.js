@@ -32,7 +32,10 @@ const getPlugins = (options) => {
   } else {
     // perfectionist
     plugins.push(require('perfectionist')({
+      colorShorthand: false,
       indentSize: 2,
+      trimLeadingZero: false,
+      zeroLengthNoUnit: false,
     }))
   }
   //
