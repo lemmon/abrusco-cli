@@ -25,11 +25,6 @@
     "postcss-preset-env": "^6.7.0",
     "postcss-reporter": "^7.0.1"
   },
-  "browserslist": [
-    "ie >= 11",
-    "> 1%",
-    "last 2 versions"
-  ],
   "scripts": {
     "build": "node cli.js test -o test/output.css",
     "test": "npm run build && diff -s node_modules/abrusco/css/abrusco.css test/output.css",
