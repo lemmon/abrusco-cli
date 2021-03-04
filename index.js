@@ -15,7 +15,6 @@ const getPlugins = (options) => {
         },
       },
     }),
-    require('autoprefixer'),
     require('postcss-discard-comments'),
     require('postcss-discard-duplicates'),
   ]
