@@ -7,43 +7,46 @@ const fileExists = require('file-exists')
 const isDirectory = require('is-directory')
 const abrusco = require('./index')
 
-const cli = meow(`
-  Usage
-    $ abrusco <input.css>
+const cli = meow(
+  `
+    Usage
+      $ abrusco <input.css>
 
-  Options
-    -o, --output Output file
-    -m, --minify Minify the output stylesheet
-    -w, --watch  Watch CSS source directory for changes
-    --novars     Do not preserve Custom Properties
+    Options
+      -o, --output Output file
+      -m, --minify Minify the output stylesheet
+      -w, --watch  Watch CSS source directory for changes
+      --novars     Do not preserve Custom Properties
 
-  Example
-    $ abrusco src/master.css -o dist/bundle.css
-    $ abrusco src/master.css -o dist/bundle.css --minify
-    $ abrusco src/master.css -o dist/bundle.css --watch
-`, {
-  flags: {
-    help: {
-      type: 'boolean',
-      alias: 'h',
+    Example
+      $ abrusco src/master.css -o dist/bundle.css
+      $ abrusco src/master.css -o dist/bundle.css --minify
+      $ abrusco src/master.css -o dist/bundle.css --watch
+  `,
+  {
+    flags: {
+      help: {
+        type: 'boolean',
+        alias: 'h',
+      },
+      minify: {
+        type: 'boolean',
+        alias: 'm',
+      },
+      output: {
+        type: 'string',
+        alias: 'o',
+      },
+      watch: {
+        type: 'boolean',
+        alias: 'w',
+      },
+      novars: {
+        type: 'boolean',
+      },
     },
-    minify: {
-      type: 'boolean',
-      alias: 'm',
-    },
-    output: {
-      type: 'string',
-      alias: 'o',
-    },
-    watch: {
-      type: 'boolean',
-      alias: 'w',
-    },
-    novars: {
-      type: 'boolean',
-    },
-  },
-})
+  }
+)
 
 function findFile(input, cb) {
   if (isDirectory.sync(input)) {
@@ -107,7 +110,7 @@ function validateOutput(output) {
 async function readStdin() {
   let code = ''
   const stdin = process.stdin
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     stdin.setEncoding('utf8')
     stdin.on('readable', () => {
       const chunk = process.stdin.read()
@@ -138,9 +141,7 @@ function handleBuild(props) {
   const options = {
     ...props,
     to: outputFile,
-    plugins: [
-      require('postcss-reporter'),
-    ],
+    plugins: [require('postcss-reporter')],
     cssvars: !cli.flags.novars,
     minify: cli.flags.minify,
   }
@@ -160,40 +161,50 @@ function handleBuild(props) {
     }
     // do watch
     const chokidar = require('chokidar')
-    chokidar.watch(path.dirname(options.from), {
-      ignored: options.to || null,
-    }).on('change', () => {
-      buildCSS(options)
-    })
+    chokidar
+      .watch(path.dirname(options.from), {
+        ignored: options.to || null,
+      })
+      .on('change', () => {
+        buildCSS(options)
+      })
   }
 }
 
 function buildCSS(props) {
   const t0 = Date.now()
   const css = props.from ? fs.readFileSync(props.from, 'utf8') : props.css
-  abrusco(css, props).then(res => {
-    if (props.to) {
-      fs.writeFile(props.to, res.css, (err) => {
-        if (err) throw err
-        const t1 = new Date()
-        const ts = (t1.valueOf() - t0) / 1000
-        console.log(`${res.css.length} bytes written to ${props.to} (${ts.toFixed(2)} seconds) at ${t1.toLocaleTimeString()}`)
-      })
-    } else {
-      process.stdout.write(res.css)
-    }
-  }).catch(err => {
-    let output = '\n'
-    if (err.file) {
-      output += `${chalk.bold.underline(logFrom(err.file))}\n`
-    }
-    if (err.reason) {
-      output += `${chalk.red(`[${err.name}]`)} ${chalk.bold(`${err.line}:${err.column}`)}\t${err.reason}`
-    } else {
-      output += `${chalk.red(`[${err.name}]`)} ${err.message}`
-    }
-    console.error(output)
-  })
+  abrusco(css, props)
+    .then((res) => {
+      if (props.to) {
+        fs.writeFile(props.to, res.css, (err) => {
+          if (err) throw err
+          const t1 = new Date()
+          const ts = (t1.valueOf() - t0) / 1000
+          console.log(
+            `${res.css.length} bytes written to ${props.to} (${ts.toFixed(
+              2
+            )} seconds) at ${t1.toLocaleTimeString()}`
+          )
+        })
+      } else {
+        process.stdout.write(res.css)
+      }
+    })
+    .catch((err) => {
+      let output = '\n'
+      if (err.file) {
+        output += `${chalk.bold.underline(logFrom(err.file))}\n`
+      }
+      if (err.reason) {
+        output += `${chalk.red(`[${err.name}]`)} ${chalk.bold(
+          `${err.line}:${err.column}`
+        )}\t${err.reason}`
+      } else {
+        output += `${chalk.red(`[${err.name}]`)} ${err.message}`
+      }
+      console.error(output)
+    })
 }
 
 function logFrom(fromValue) {
