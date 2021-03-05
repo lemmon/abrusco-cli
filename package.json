@@ -39,8 +39,8 @@
     "design",
     "responsive"
   ],
+  "homepage": "https://abrusco.com/",
   "bugs": {
     "url": "https://github.com/lemmon/abrusco-cli/issues"
-  },
-  "homepage": "https://github.com/lemmon/abrusco-cli#readme"
+  }
 }
