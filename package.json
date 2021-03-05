@@ -25,9 +25,6 @@
     "postcss-reporter": "^7.0.2"
   },
   "scripts": {
-    "build": "node cli.js test -o test/output.css",
-    "test": "npm run build && diff -s node_modules/abrusco/css/abrusco.css test/output.css",
-    "w": "npm run build -- --watch",
     "version": "git add -A",
     "postversion": "git push && git push --tags && npm publish"
   },
