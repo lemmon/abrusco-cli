@@ -8,7 +8,6 @@ const getPlugins = (options) => {
     require('postcss-preset-env')({
       stage: 0,
       features: {
-        'color-mod-function': true,
         'custom-properties': {
           preserve: options.cssvars === false ? false : true,
         },
@@ -27,16 +26,6 @@ const getPlugins = (options) => {
     plugins.push(
       require('cssnano')({
         autoprefixer: false,
-      })
-    )
-  } else {
-    // perfectionist
-    plugins.push(
-      require('perfectionist')({
-        colorShorthand: false,
-        indentSize: 2,
-        trimLeadingZero: false,
-        zeroLengthNoUnit: false,
       })
     )
   }
