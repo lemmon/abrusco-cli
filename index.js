@@ -8,9 +8,11 @@ const getPlugins = (options) => {
     require('postcss-preset-env')({
       stage: 0,
       features: {
-        'custom-properties': {
-          preserve: options.cssvars === false ? false : true,
-        },
+        ...(options.cssvars === false && {
+          'custom-properties': {
+            preserve: false,
+          },
+        }),
       },
     }),
     require('postcss-discard-comments'),
