@@ -9,19 +9,19 @@
     "abrusco": "cli.js"
   },
   "dependencies": {
-    "chalk": "^4.1.0",
-    "chokidar": "^3.5.1",
-    "cssnano": "^5.0.4",
-    "file-exists": "5.0.1",
-    "is-directory": "0.3.1",
-    "meow": "9.0.0",
-    "postcss": "^8.3.0",
-    "postcss-assets": "6.0.0",
-    "postcss-discard-comments": "^5.0.0",
-    "postcss-discard-duplicates": "^5.0.0",
-    "postcss-import": "^14.0.2",
-    "postcss-preset-env": "^7.2.0",
-    "postcss-reporter": "^7.0.2"
+    "chalk": "~4.1.0",
+    "chokidar": "~3.5.0",
+    "cssnano": "~5.1.0",
+    "file-exists": "~5.0.0",
+    "is-directory": "~0.3.0",
+    "meow": "~9.0.0",
+    "postcss": "~8.4.0",
+    "postcss-assets": "~6.0.0",
+    "postcss-discard-comments": "~5.1.0",
+    "postcss-discard-duplicates": "~5.1.0",
+    "postcss-import": "~15.0.0",
+    "postcss-preset-env": "~7.8.0",
+    "postcss-reporter": "~7.0.0"
   },
   "scripts": {
     "version": "git add -A",
