@@ -21,6 +21,7 @@ Options
   -m, --minify Minify the output stylesheet
   -w, --watch  Watch CSS source directory for changes
   --novars     Do not preserve CSS variables
+  --purge      Purge CSS
 
 Example
   $ abrusco src/master.css -o dist/bundle.css

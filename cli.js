@@ -17,6 +17,7 @@ const cli = meow(
       -m, --minify Minify the output stylesheet
       -w, --watch  Watch CSS source directory for changes
       --novars     Do not preserve Custom Properties
+      --purge      Purge CSS
 
     Example
       $ abrusco src/master.css -o dist/bundle.css
@@ -42,6 +43,9 @@ const cli = meow(
         alias: 'w',
       },
       novars: {
+        type: 'boolean',
+      },
+      purge: {
         type: 'boolean',
       },
     },
@@ -143,6 +147,7 @@ function handleBuild(props) {
     to: outputFile,
     plugins: [require('postcss-reporter')],
     cssvars: !cli.flags.novars,
+    purge: cli.flags.purge,
     minify: cli.flags.minify,
   }
   // check files

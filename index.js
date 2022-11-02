@@ -15,16 +15,27 @@ const getPlugins = (options) => {
         }),
       },
     }),
-    require('postcss-discard-comments'),
-    require('postcss-discard-duplicates'),
   ]
   // plugins
   if (Array.isArray(options.plugins)) {
     plugins.push(...options.plugins)
   }
+  // purge css
+  if (options.purge) {
+    const purgecss = require('@fullhuman/postcss-purgecss')
+    plugins.push(
+      purgecss({
+        defaultExtractor: (x) => x.match(/[\w-/:]+(?<!:)/g) || [],
+      })
+    )
+  }
   // format output
+  plugins.push(
+    require('postcss-discard-comments'),
+    require('postcss-discard-duplicates')
+  )
+  // minify
   if (options.minify) {
-    // minify
     plugins.push(
       require('cssnano')({
         autoprefixer: false,
