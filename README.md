@@ -1,3 +1,5 @@
+Note: This package has been [moved](https://github.com/lemmon/abrusco/tree/master/packages/abrusco-cli) to [abrusco](https://github.com/lemmon/abrusco) monorepo.
+
 # Abrusco
 
 CLI interface for Abrusco stylesheets. <https://abrusco.com>
